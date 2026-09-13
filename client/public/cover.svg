@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1600">
+<defs><linearGradient id="p" x2="1" y2="1"><stop stop-color="#2a1712"/><stop offset=".5" stop-color="#6e3425"/><stop offset="1" stop-color="#a36a38"/></linearGradient></defs>
+<rect width="1200" height="1600" fill="url(#p)"/><rect x="55" y="55" width="1090" height="1490" rx="18" fill="none" stroke="#d9b66b" stroke-width="8"/>
+<rect x="90" y="90" width="1020" height="1420" rx="12" fill="none" stroke="#8e6238" stroke-width="2"/>
+<g fill="#f6e5bd" text-anchor="middle" font-family="Georgia,serif"><text x="600" y="420" font-size="76" font-weight="bold">BESTIÁRIO</text><text x="600" y="510" font-size="62">CULTURAL</text><text x="600" y="650" font-size="28" letter-spacing="8">MEMÓRIAS • SABERES • TRADIÇÕES</text></g>
+<g fill="none" stroke="#d9b66b" stroke-width="6"><circle cx="600" cy="850" r="180"/><path d="M420 850h360M600 670v360M475 730q125 100 250 0M475 970q125-100 250 0"/></g>
+<text x="600" y="1230" fill="#f6e5bd" text-anchor="middle" font-family="Georgia,serif" font-size="30">Um acervo digital da cultura popular brasileira</text>
+</svg>

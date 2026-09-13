@@ -1,0 +1,19 @@
+{
+  "name": "Bestiário Cultural",
+  "short_name": "Bestiário",
+  "description": "Livro digital das culturas populares da Paraíba.",
+  "id": "/",
+  "start_url": "/?modo=leitor",
+  "display": "standalone",
+  "background_color": "#1d2426",
+  "theme_color": "#1d2426",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/cover.svg",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
