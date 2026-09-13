@@ -1,33 +1,45 @@
-# Deploy
-
-## Supabase
-Abra o SQL Editor e execute `supabase/schema.sql` uma única vez.
-
-Depois copie:
-- Project URL -> `SUPABASE_URL`
-- Secret key (`sb_secret_...`) -> `SUPABASE_SECRET_KEY`
-
-A chave secreta é exclusiva do backend.
+# Deploy — Bestiário Cultural
 
 ## Vercel
-Importe o repositório pelo GitHub.
 
 - Root Directory: `.`
-- Build Command: `npm run build`
+- Framework Preset: Vite
 - Install Command: `npm install`
+- Build Command: `npm run build`
 - Output Directory: deixe vazio
-- Framework Preset: Other
+- Node.js: 24.x (ou a versão definida pelo projeto)
 
-Environment Variables:
-```
-SUPABASE_URL=...
-SUPABASE_SECRET_KEY=...
+O projeto usa `server.ts` na raiz. O Vercel detecta servidores Node/Express com configuração zero.
+
+## Variáveis de ambiente
+
+Configure em Production, Preview e Development:
+
+```text
+SUPABASE_URL=https://SEU-PROJETO.supabase.co
+SUPABASE_SECRET_KEY=sb_secret_...
 SUPABASE_STORAGE_BUCKET=cultural-images
-ADMIN_LOCAL_USERNAME=...
-ADMIN_LOCAL_PASSWORD=...
-JWT_SECRET=...
+ADMIN_LOCAL_USERNAME=seu_usuario
+ADMIN_LOCAL_PASSWORD=sua_senha
+JWT_SECRET=uma_chave_aleatoria_longa
 ```
 
-Depois de salvar as variáveis, faça um novo deploy.
+Não publique nenhuma dessas chaves no GitHub.
 
-O backend é detectado a partir do `server.ts` na raiz. Não crie `api/[...path].ts`, `api/index.ts` ou configurações antigas de Functions para este projeto.
+## Supabase
+
+1. Crie um projeto novo.
+2. Abra o SQL Editor.
+3. Execute todo o conteúdo de `supabase/schema.sql`.
+4. Confirme no Storage a existência do bucket `cultural-images`.
+5. A chave secreta fica somente na Vercel/backend.
+
+## Testes depois do deploy
+
+```text
+/
+/api/health
+/admin
+```
+
+`/api/health` deve responder JSON com `ok: true`.
