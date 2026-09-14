@@ -1,0 +1,31 @@
+name: Validar Bestiário Cultural
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@v4
+      - name: Configurar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Configurar pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.4.1
+      - name: Instalar dependências
+        run: pnpm install --frozen-lockfile
+      - name: Conferir tipos
+        run: pnpm check
+      - name: Executar testes
+        run: pnpm test
+      - name: Gerar build de produção
+        run: pnpm build

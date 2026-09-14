@@ -1,0 +1,85 @@
+# Project TODO
+
+- [x] Modelar a estrutura editorial e de dados dos 20 capítulos exatamente conforme a lista aprovada.
+- [x] Pesquisar, redigir e referenciar conteúdo histórico-cultural conciso e preciso para Bumba Meu Boi, Forró, Coco de Roda, Quadrilha Junina e Maracatu.
+- [x] Pesquisar, redigir e referenciar conteúdo histórico-cultural conciso e preciso para Cavalo-Marinho, Repente/Cordel, Carnaval de Rua, Fandango e Ciranda.
+- [x] Pesquisar, redigir e referenciar conteúdo histórico-cultural conciso e preciso para Pastoril, Reisado, Baião, Xaxado e Cangaço.
+- [x] Pesquisar, redigir e referenciar conteúdo histórico-cultural conciso e preciso para Artesanato de Barro, Renda Renascença, Cerâmica de Caruaru, Lapinha e Festa de São João.
+- [x] Criar uma capa animada com o título "Bestiário Cultural", subtítulo temático e ação de entrada na obra.
+- [x] Criar o livro digital interativo com páginas animadas, navegação por teclado e controle de leitura acessível.
+- [x] Implementar as páginas individuais das 20 manifestações com categoria, descrição, região indicada e ilustração identificada.
+- [x] Criar o catálogo navegável em grade, com busca por nome e filtros estritamente limitados a música, dança, artesanato e festa.
+- [x] Criar a página de créditos com referências bibliográficas organizadas por manifestação.
+- [x] Implementar um menu global fixo contendo somente Capa, Livro, Catálogo e Créditos.
+- [x] Aplicar identidade visual refinada de inspiração nordestina, com paleta quente, texturas e ornamentos de xilogravura e cordel.
+- [x] Garantir layout adaptado para desktop, tablet e celular e respeitar prefers-reduced-motion.
+- [x] Criar testes automatizados para a integridade do acervo, filtros e dados públicos.
+- [x] Verificar visualmente os fluxos principais, a responsividade e a presença exata dos 20 capítulos.
+- [x] Pesquisar e registrar fontes específicas para Coco de Roda, Maracatu, Carnaval de Rua, Ciranda, Pastoril, Reisado, Xaxado, Cangaço, Artesanato de Barro, Cerâmica de Caruaru e Lapinha.
+- [x] Reforçar a justificativa curatorial e as referências dos capítulos comparativos de Fandango e Cerâmica de Caruaru.
+- [x] Substituir referências genéricas por referências diretamente relacionadas a cada manifestação quando houver fonte pública verificável.
+- [x] Adicionar testes para os filtros do catálogo e para os procedimentos públicos de listagem e busca por capítulo.
+- [x] Registrar uma fonte pública específica para Pastoril e revisar a consistência das fontes diretas dos capítulos juninos e musicais.
+- [x] Documentar a conferência final dos 20 capítulos exibidos na interface.
+- [x] Documentar em arquivo de validação a conferência visual dos 20 capítulos exibidos na interface.
+- [x] Registrar a revisão de consistência das fontes dos capítulos juninos e musicais, explicitando as fontes diretas e compartilhadas.
+- [x] Criar uma rota administrativa protegida por autenticação e perfil de administrador.
+- [x] Implementar procedimentos de criação, edição, publicação e despublicação de culturas no banco de dados.
+- [x] Criar formulário administrativo completo para título, categoria, território, descrição, nota curatorial, motivo visual e fontes.
+- [x] Integrar o livro e o catálogo públicos ao acervo persistido, com atualização após alterações administrativas.
+- [x] Permitir a inclusão de novas culturas além das 20 iniciais sem quebrar a numeração e os filtros existentes.
+- [x] Criar testes de autorização, CRUD administrativo e visibilidade pública dos registros publicados.
+- [x] Validar visualmente o fluxo de administração e a atualização do catálogo público.
+- [x] Adicionar teste automatizado que comprove a exclusão pública de registros despublicados e a exibição de registros publicados.
+- [x] Documentar a validação manual do fluxo completo de administração para o catálogo público, com evidência de atualização após publicação ou edição.
+- [x] Validar por integração os procedimentos públicos e administrativos de criação, edição, publicação e despublicação usando um registro reversível no banco.
+- [x] Registrar evidência visual objetiva de uma cultura temporária publicada no acervo público e removê-la ao final da validação.
+- [x] Gerar e registrar uma evidência visual verificável do capítulo temporário no catálogo público antes de sua limpeza.
+- [x] Confirmar por navegação renderizada o contador atualizado e o título do capítulo temporário antes da limpeza.
+- [x] Transformar o leitor em uma sequência virtual de páginas navegável prioritariamente por clique à esquerda e à direita.
+- [x] Criar uma página de abertura antes de cada cultura, com título, categoria, território e composição visual própria.
+- [x] Acrescentar galeria de imagens representativas em cada capítulo cultural, sem comprometer a leitura responsiva.
+- [x] Configurar credenciais seguras para o acesso administrativo local informado pelo usuário.
+- [x] Criar tela de acesso administrativo por nome e senha e preservar a autorização do painel de edição.
+- [x] Testar navegação por páginas, galeria de imagens e bloqueio/liberação de acesso administrativo.
+- [x] Validar visualmente o leitor virtual em desktop e celular.
+- [x] Criar uma segunda imagem visualmente distinta por cultura, a partir de detalhes editoriais das imagens principais, para formar galerias reais.
+- [x] Validar objetivamente a troca de páginas por clique lateral e a renderização de múltiplas imagens no leitor virtual.
+- [x] Registrar evidência de bloqueio e liberação da área administrativa pelo fluxo local de nome e senha.
+- [x] Registrar evidência verificável da página de capítulo com imagem principal e imagem de detalhe renderizadas no leitor virtual.
+- [x] Documentar a confirmação do fluxo local de acesso, incluindo estado de bloqueio e painel liberado após a autenticação.
+- [x] Confirmar por navegação renderizada a galeria de três imagens da página de capítulo e os estados bloqueado e liberado do painel administrativo.
+- [x] Pesquisar e selecionar fotografias reais, representativas e devidamente creditadas para as 20 manifestações do acervo.
+- [x] Registrar autoria, instituição, URL de origem e condição de uso de cada fotografia documental selecionada.
+- [x] Criar páginas complementares de contexto, vozes do território e detalhes de prática para ampliar a leitura de cada cultura.
+- [x] Reescrever e aprofundar os textos dos capítulos com uma voz editorial humana, situada e não padronizada.
+- [x] Integrar fotografias documentais ao leitor e ao catálogo, preservando créditos visíveis e acessibilidade.
+- [x] Ampliar a sequência do livro para incluir páginas de contexto e encerramento por manifestação.
+- [x] Revisar visualmente a edição ampliada em desktop e celular e validar a consistência dos créditos fotográficos.
+- [x] Verificar individualmente autoria, licença e URL de origem de cada fotografia documental e substituir referências sem condição de uso clara.
+- [x] Atualizar o registro de créditos com condição de uso explícita e confirmação por capítulo.
+- [x] Reescrever o texto-base público dos capítulos, não apenas as notas complementares, com aprofundamento editorial e voz humana.
+- [x] Confirmar visualmente, por amostragem e por dados, a correspondência entre cada fotografia exibida, seu crédito e seu link de origem.
+- [x] Substituir créditos de categoria por arquivos fotográficos específicos e licenciados para Forró, Baião e Cangaço.
+- [x] Localizar uma fotografia de Pastoril com licença individual verificável ou sinalizar o capítulo como sem fotografia documental específica.
+- [x] Reescrever manualmente os textos-base de cada capítulo, preservando as notas editoriais apenas como complemento.
+- [x] Criar uma validação objetiva que confira a correspondência imagem, crédito e URL de arquivo para as 20 entradas.
+- [x] Permitir que a administração associe uma foto por URL externa ou por envio de arquivo a cada cultura.
+- [x] Persistir a origem, o crédito e a condição de uso da foto escolhida para exibição pública segura.
+- [x] Converter a experiência pública em celular para um leitor imersivo de páginas, ocultando capa, catálogo e créditos extensos nesse formato.
+- [x] Preparar uma versão Android que consuma o mesmo acervo público e reflita atualizações administrativas sem nova instalação.
+- [x] Validar os fluxos de administração de imagens, leitor móvel e atualização do acervo compartilhado.
+- [x] Documentar uma rota de hospedagem externa completa para site, banco, fotos, administração e APK do Bestiário Cultural.
+- [x] Remover dependências específicas do ambiente atual e criar configuração externa por variáveis de ambiente.
+- [x] Migrar o envio de imagens para um provedor externo compatível com Cloudinary.
+- [x] Preparar arquivos de GitHub Actions, Render e documentação de publicação independente.
+- [x] Validar a compilação e os testes da base de código migrada.
+- [x] Gerar um arquivo ZIP limpo com o código migrado, documentação e automações para GitHub, sem segredos ou artefatos locais.
+- [x] Permitir que administradores criem, editem, ordenem e removam páginas extras de aprofundamento por cultura.
+- [x] Permitir de duas a três imagens por página extra, enviadas ou informadas por URL, com crédito, fonte e licença individuais.
+- [x] Exibir as páginas extras no leitor virtual com navegação lateral, galeria e créditos visíveis.
+- [x] Atualizar textos de interface e identidade para apresentar o acervo como culturas populares brasileiras, sem limitar a obra à Paraíba.
+- [x] Validar a nova estrutura de páginas, imagens, painel administrativo e leitor público.
+- [x] Validar fim a fim a persistência e a exibição pública de uma página extra com galeria documentada, sem alterar o acervo editorial permanente.
+- [x] Executar uma verificação temporária e reversível da página extra persistida no banco e exibida no leitor público.
+- [x] Criar um tutorial de publicação externa do Bestiário Cultural específico para Linux Mint.

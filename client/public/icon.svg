@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#1d2426" />
+  <circle cx="256" cy="256" r="190" fill="none" stroke="#e7c98f" stroke-width="10" />
+  <g fill="#e7c98f">
+    <circle cx="256" cy="256" r="34" />
+    <g>
+      <path d="M256 96 L272 176 L240 176 Z" />
+      <path d="M256 416 L272 336 L240 336 Z" />
+      <path d="M96 256 L176 240 L176 272 Z" />
+      <path d="M416 256 L336 240 L336 272 Z" />
+      <path d="M141 141 L206 186 L186 206 Z" />
+      <path d="M371 371 L306 326 L326 306 Z" />
+      <path d="M371 141 L326 206 L306 186 Z" />
+      <path d="M141 371 L186 306 L206 326 Z" />
+    </g>
+  </g>
+  <text x="256" y="470" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="34" fill="#e7c98f">Bestiário</text>
+</svg>
