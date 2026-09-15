@@ -8,15 +8,29 @@ let _db: ReturnType<typeof drizzle> | null = null;
 let _client: ReturnType<typeof postgres> | null = null;
 
 // Lazily create the drizzle instance so local tooling can run without a DB.
-// `prepare: false` is required when DATABASE_URL points at Supabase's pooled
-// connection (PgBouncer in transaction mode, port 6543) — see docs/DEPLOY_VERCEL_SUPABASE.md.
+// `prepare: false` é exigido quando DATABASE_URL aponta para a conexão via
+// pooler do Supabase (PgBouncer em modo transaction, porta 6543) — ver
+// docs/DEPLOY_VERCEL_SUPABASE.md. `ssl: "require"` é obrigatório: o Postgres
+// do Supabase recusa conexões sem TLS, e o driver `postgres-js` NÃO ativa SSL
+// automaticamente só porque a string de conexão não o desabilita — sem esta
+// opção, toda consulta falha (e, sem tratamento de erro no caminho de
+// leitura, isso derruba a página inicial inteira, não só o painel admin).
+// `connect_timeout` evita que uma função serverless fique presa esperando
+// uma conexão que nunca vai completar, até estourar o limite de execução da
+// Vercel — preferimos falhar rápido com um erro claro nos logs.
 export async function getDb() {
   if (!_db && process.env.DATABASE_URL) {
     try {
-      _client = postgres(process.env.DATABASE_URL, { prepare: false, max: 1 });
+      _client = postgres(process.env.DATABASE_URL, {
+        prepare: false,
+        max: 1,
+        ssl: "require",
+        connect_timeout: 10,
+        idle_timeout: 20,
+      });
       _db = drizzle(_client);
     } catch (error) {
-      console.warn("[Database] Failed to connect:", error);
+      console.error("[Database] Failed to construct client:", error);
       _db = null;
     }
   }
@@ -198,24 +212,33 @@ export function publicCulturalEntries(entries: CulturalEntry[]): CulturalEntry[]
 }
 
 export async function listCulturalEntries(options?: { includeUnpublished?: boolean }): Promise<CulturalEntry[]> {
-  const db = await getDb();
   const includeUnpublished = options?.includeUnpublished ?? false;
+  const db = await getDb();
 
   if (!db) {
-    return includeUnpublished ? culturalEntries : culturalEntries;
+    return culturalEntries;
   }
 
-  const chapters = includeUnpublished
-    ? await db.select().from(culturalChapters).orderBy(asc(culturalChapters.chapterNumber))
-    : await db.select().from(culturalChapters).where(eq(culturalChapters.isPublished, true)).orderBy(asc(culturalChapters.chapterNumber));
+  try {
+    const chapters = includeUnpublished
+      ? await db.select().from(culturalChapters).orderBy(asc(culturalChapters.chapterNumber))
+      : await db.select().from(culturalChapters).where(eq(culturalChapters.isPublished, true)).orderBy(asc(culturalChapters.chapterNumber));
 
-  if (!chapters.length) return [];
-  const chapterSources = await db.select().from(culturalSources).where(inArray(culturalSources.chapterSlug, chapters.map((chapter) => chapter.slug)));
-  const pageRows = await db.select().from(culturalExtraPages).where(inArray(culturalExtraPages.chapterSlug, chapters.map((chapter) => chapter.slug)));
-  const pageIds = pageRows.map((page) => page.id);
-  const imageRows = pageIds.length ? await db.select().from(culturalExtraPageImages).where(inArray(culturalExtraPageImages.pageId, pageIds)) : [];
-  const entries = mapCulturalEntries(chapters, chapterSources, pageRows, imageRows);
-  return includeUnpublished ? entries : publicCulturalEntries(entries);
+    if (!chapters.length) return [];
+    const chapterSources = await db.select().from(culturalSources).where(inArray(culturalSources.chapterSlug, chapters.map((chapter) => chapter.slug)));
+    const pageRows = await db.select().from(culturalExtraPages).where(inArray(culturalExtraPages.chapterSlug, chapters.map((chapter) => chapter.slug)));
+    const pageIds = pageRows.map((page) => page.id);
+    const imageRows = pageIds.length ? await db.select().from(culturalExtraPageImages).where(inArray(culturalExtraPageImages.pageId, pageIds)) : [];
+    const entries = mapCulturalEntries(chapters, chapterSources, pageRows, imageRows);
+    return includeUnpublished ? entries : publicCulturalEntries(entries);
+  } catch (error) {
+    console.error("[Database] Falha ao consultar o acervo:", error);
+    // O painel administrativo precisa ver o erro real (não faz sentido editar
+    // dados "fantasmas"); só a leitura pública recua para o acervo estático
+    // embutido, para que uma instabilidade no banco não derrube a home inteira.
+    if (includeUnpublished) throw error;
+    return culturalEntries;
+  }
 }
 
 export async function getCulturalEntryBySlug(slug: string, includeUnpublished = false) {
@@ -223,10 +246,13 @@ export async function getCulturalEntryBySlug(slug: string, includeUnpublished = 
   return entries.find((entry) => entry.slug === slug) ?? null;
 }
 
-async function replaceSources(chapterSlug: string, sources: CulturalSource[]) {
-  const db = await getDb();
-  if (!db) throw new Error("Banco de dados indisponível.");
+// Tipo comum entre a conexão principal (`db`) e uma transação (`tx`), para
+// que `replaceSources`/`replaceExtraPages` aceitem qualquer uma das duas —
+// necessário para que create/updateCulturalEntry rodem tudo dentro de uma
+// única transação atômica.
+type DbClient = Parameters<Parameters<NonNullable<Awaited<ReturnType<typeof getDb>>>["transaction"]>[0]>[0];
 
+async function replaceSources(db: DbClient, chapterSlug: string, sources: CulturalSource[]) {
   await db.delete(culturalSources).where(eq(culturalSources.chapterSlug, chapterSlug));
   if (sources.length) {
     await db.insert(culturalSources).values(
@@ -244,10 +270,7 @@ async function replaceSources(chapterSlug: string, sources: CulturalSource[]) {
   }
 }
 
-async function replaceExtraPages(chapterSlug: string, pages: CulturalExtraPage[]) {
-  const db = await getDb();
-  if (!db) throw new Error("Banco de dados indisponível.");
-
+async function replaceExtraPages(db: DbClient, chapterSlug: string, pages: CulturalExtraPage[]) {
   const previousPages = await db.select({ id: culturalExtraPages.id }).from(culturalExtraPages).where(eq(culturalExtraPages.chapterSlug, chapterSlug));
   const previousIds = previousPages.map((page) => page.id);
   if (previousIds.length) {
@@ -295,25 +318,32 @@ export async function createCulturalEntry(input: CulturalChapterInput) {
   const current = await db.select({ chapterNumber: culturalChapters.chapterNumber }).from(culturalChapters);
   const chapterNumber = Math.max(0, ...current.map((chapter) => chapter.chapterNumber)) + 1;
 
-  await db.insert(culturalChapters).values({
-    chapterNumber,
-    photoUrl: input.photoUrl.trim(),
-    photoCredit: input.photoCredit.trim(),
-    photoSourceUrl: input.photoSourceUrl.trim(),
-    photoLicense: input.photoLicense.trim(),
-    slug,
-    title: input.title.trim(),
-    subtitle: input.subtitle.trim(),
-    category: input.category,
-    territory: input.region.trim(),
-    territorialNote: input.territorialNote.trim(),
-    excerpt: input.excerpt.trim(),
-    content: input.story.map((paragraph) => paragraph.trim()).filter(Boolean).join("\n\n"),
-    illustrationLabel: `Ilustração artística — ${input.visualMotif.trim()}`,
-    isPublished: input.isPublished,
+  // As várias escritas abaixo (capítulo, fontes, páginas extras e suas
+  // imagens) são atômicas: se qualquer uma falhar, a transação inteira é
+  // desfeita — em vez de deixar uma cultura "pela metade" no banco, o que
+  // exigiria intervenção manual e pareceria um erro sem explicação para
+  // quem está usando o painel.
+  await db.transaction(async (tx) => {
+    await tx.insert(culturalChapters).values({
+      chapterNumber,
+      photoUrl: input.photoUrl.trim(),
+      photoCredit: input.photoCredit.trim(),
+      photoSourceUrl: input.photoSourceUrl.trim(),
+      photoLicense: input.photoLicense.trim(),
+      slug,
+      title: input.title.trim(),
+      subtitle: input.subtitle.trim(),
+      category: input.category,
+      territory: input.region.trim(),
+      territorialNote: input.territorialNote.trim(),
+      excerpt: input.excerpt.trim(),
+      content: input.story.map((paragraph) => paragraph.trim()).filter(Boolean).join("\n\n"),
+      illustrationLabel: `Ilustração artística — ${input.visualMotif.trim()}`,
+      isPublished: input.isPublished,
+    });
+    await replaceSources(tx, slug, input.sources);
+    await replaceExtraPages(tx, slug, input.extraPages);
   });
-  await replaceSources(slug, input.sources);
-  await replaceExtraPages(slug, input.extraPages);
 
   return getCulturalEntryBySlug(slug, true);
 }
@@ -332,29 +362,31 @@ export async function updateCulturalEntry(originalSlug: string, input: CulturalC
     if (duplicate.length) throw new Error("Já existe uma cultura com este identificador.");
   }
 
-  await db.update(culturalChapters).set({
-    slug,
-    photoUrl: input.photoUrl.trim(),
-    photoCredit: input.photoCredit.trim(),
-    photoSourceUrl: input.photoSourceUrl.trim(),
-    photoLicense: input.photoLicense.trim(),
-    title: input.title.trim(),
-    subtitle: input.subtitle.trim(),
-    category: input.category,
-    territory: input.region.trim(),
-    territorialNote: input.territorialNote.trim(),
-    excerpt: input.excerpt.trim(),
-    content: input.story.map((paragraph) => paragraph.trim()).filter(Boolean).join("\n\n"),
-    illustrationLabel: `Ilustração artística — ${input.visualMotif.trim()}`,
-    isPublished: input.isPublished,
-  }).where(eq(culturalChapters.slug, originalSlug));
+  await db.transaction(async (tx) => {
+    await tx.update(culturalChapters).set({
+      slug,
+      photoUrl: input.photoUrl.trim(),
+      photoCredit: input.photoCredit.trim(),
+      photoSourceUrl: input.photoSourceUrl.trim(),
+      photoLicense: input.photoLicense.trim(),
+      title: input.title.trim(),
+      subtitle: input.subtitle.trim(),
+      category: input.category,
+      territory: input.region.trim(),
+      territorialNote: input.territorialNote.trim(),
+      excerpt: input.excerpt.trim(),
+      content: input.story.map((paragraph) => paragraph.trim()).filter(Boolean).join("\n\n"),
+      illustrationLabel: `Ilustração artística — ${input.visualMotif.trim()}`,
+      isPublished: input.isPublished,
+    }).where(eq(culturalChapters.slug, originalSlug));
 
-  if (slug !== originalSlug) {
-    await db.update(culturalSources).set({ chapterSlug: slug }).where(eq(culturalSources.chapterSlug, originalSlug));
-    await db.update(culturalExtraPages).set({ chapterSlug: slug }).where(eq(culturalExtraPages.chapterSlug, originalSlug));
-  }
-  await replaceSources(slug, input.sources);
-  await replaceExtraPages(slug, input.extraPages);
+    if (slug !== originalSlug) {
+      await tx.update(culturalSources).set({ chapterSlug: slug }).where(eq(culturalSources.chapterSlug, originalSlug));
+      await tx.update(culturalExtraPages).set({ chapterSlug: slug }).where(eq(culturalExtraPages.chapterSlug, originalSlug));
+    }
+    await replaceSources(tx, slug, input.sources);
+    await replaceExtraPages(tx, slug, input.extraPages);
+  });
 
   return getCulturalEntryBySlug(slug, true);
 }

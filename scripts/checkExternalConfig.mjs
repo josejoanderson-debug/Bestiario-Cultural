@@ -3,12 +3,9 @@ const required = [
   "JWT_SECRET",
   "ADMIN_LOCAL_USERNAME",
   "ADMIN_LOCAL_PASSWORD",
-  "CLOUDINARY_CLOUD_NAME",
-  "CLOUDINARY_API_KEY",
-  "CLOUDINARY_API_SECRET",
 ];
 
-const recommended = ["VITE_CLOUDINARY_CLOUD_NAME", "VITE_CLOUDINARY_UPLOAD_PRESET"];
+const recommended = ["VITE_SUPABASE_URL", "VITE_SUPABASE_ANON_KEY"];
 
 const missing = required.filter((key) => !process.env[key]?.trim());
 if (missing.length) {
@@ -29,8 +26,8 @@ if (process.env.JWT_SECRET.length < 32) {
 const missingRecommended = recommended.filter((key) => !process.env[key]?.trim());
 if (missingRecommended.length) {
   console.warn(
-    `Aviso: variáveis públicas de upload não definidas (${missingRecommended.join(", ")}). O envio de fotos pelo painel administrativo não vai funcionar até que sejam configuradas.`,
+    `Aviso: variáveis públicas do Supabase Storage não definidas (${missingRecommended.join(", ")}). O envio de fotos pelo painel administrativo não vai funcionar até que sejam configuradas.`,
   );
 }
 
-console.log("Configuração externa validada: banco, sessão local e imagens estão prontos para publicação.");
+console.log("Configuração externa validada: banco e sessão local estão prontos para publicação.");

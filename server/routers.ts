@@ -1,4 +1,3 @@
-import { culturalEntries } from "../shared/culturalData";
 import { COOKIE_NAME } from "../shared/const";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
@@ -6,7 +5,6 @@ import { createCulturalEntry, getCulturalEntryBySlug, listCulturalEntries, setCu
 import { getSessionCookieOptions } from "./_core/cookies";
 import { publicProcedure, router } from "./_core/trpc";
 import { hasLocalAdminSession, LOCAL_ADMIN_COOKIE, localAdminSessionValue, verifyLocalAdminCredentials } from "./localAdmin";
-import { storagePut } from "./storage";
 
 const sourceInput = z.object({
   title: z.string().trim().min(2).max(600),
@@ -95,25 +93,6 @@ export const appRouter = router({
       via: ctx.user?.role === "admin" ? "manus" : hasLocalAdminSession(ctx.req?.headers?.cookie) ? "local" : null,
     })),
     listCultures: editorProcedure.query(() => listCulturalEntries({ includeUnpublished: true })),
-    // Rota legada/alternativa: o painel administrativo hoje envia fotos direto
-    // do navegador para o Cloudinary (client/src/lib/cloudinaryUpload.ts), o
-    // que evita o limite de 4,5 MB por requisição das Serverless Functions da
-    // Vercel. Esta rota continua disponível para quem hospedar o servidor em
-    // um ambiente Node tradicional (Render, VPS) sem configurar um upload
-    // preset não assinado no Cloudinary.
-    uploadPhoto: editorProcedure.input(z.object({
-      fileName: z.string().trim().min(1).max(160),
-      mimeType: z.enum(["image/jpeg", "image/png", "image/webp", "image/gif"]),
-      base64: z.string().min(20).max(7_000_000),
-    })).mutation(async ({ input }) => {
-      const extension = input.mimeType.split("/")[1] ?? "jpg";
-      const safeName = input.fileName.replace(/[^a-zA-Z0-9._-]+/g, "-").replace(/\.[a-zA-Z0-9]+$/, "").slice(0, 96) || "foto";
-      const file = Buffer.from(input.base64, "base64");
-      if (!file.length || file.length > 5 * 1024 * 1024) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: "Envie uma imagem de até 5 MB." });
-      }
-      return storagePut(`cultural-photos/${Date.now()}-${safeName}.${extension}`, file, input.mimeType);
-    }),
     createCulture: editorProcedure.input(culturalInput).mutation(({ input }) => createCulturalEntry(input)),
     updateCulture: editorProcedure.input(z.object({ originalSlug: z.string().min(1), culture: culturalInput })).mutation(({ input }) => updateCulturalEntry(input.originalSlug, input.culture)),
     setPublication: editorProcedure.input(z.object({ slug: z.string().min(1), isPublished: z.boolean() })).mutation(({ input }) => setCulturalEntryPublication(input.slug, input.isPublished)),

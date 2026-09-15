@@ -1,5 +1,7 @@
 # Tutorial para Linux Mint: publicar o Bestiário Cultural fora do Manus
 
+> **Nota (atualizado):** este tutorial é de uma fase anterior e usa TiDB Cloud + Cloudinary + Render. O caminho atual e recomendado é **Vercel + Supabase** (banco Postgres e fotos no Supabase Storage) — siga [`docs/DEPLOY_VERCEL_SUPABASE.md`](DEPLOY_VERCEL_SUPABASE.md). Este tutorial continua funcional se você preferir Render, mas troque as instruções de TiDB/Cloudinary pelas de Supabase (banco e Storage) descritas naquele guia.
+
 ## Resultado esperado
 
 Ao terminar este roteiro, o Bestiário ficará operando fora do Manus com o código no **GitHub**, o banco no **TiDB Cloud**, as novas fotos no **Cloudinary** e o site/API no **Render**. O aplicativo Android poderá apontar para o mesmo endereço externo, de modo que alterações feitas na administração sejam exibidas no navegador e no app.

@@ -1,5 +1,7 @@
 # Fontes para hospedagem externa
 
+> **Nota (atualizado):** registro histórico da pesquisa que levou às escolhas originais (Render/TiDB/Cloudinary). A configuração atual usa Vercel + Supabase — ver [`docs/DEPLOY_VERCEL_SUPABASE.md`](DEPLOY_VERCEL_SUPABASE.md).
+
 - Render oferece serviços web gratuitos para Node, mas os interrompe após 15 minutos sem tráfego e declara que não são indicados para produção: <https://render.com/docs/free>.
 - O TiDB Cloud Starter é compatível com MySQL e possui quota sem custo de 5 GiB de dados por instância e 50 milhões de RUs mensais: <https://docs.pingcap.com/tidbcloud/select-cluster-tier/>.
 - O Cloudinary Free permite upload, API e CDN, sujeito aos créditos mensais: <https://cloudinary.com/pricing>.

@@ -1,5 +1,7 @@
 # Publicação externa do Bestiário Cultural
 
+> **Nota (atualizado):** siga [`docs/DEPLOY_VERCEL_SUPABASE.md`](DEPLOY_VERCEL_SUPABASE.md) como guia principal — banco Postgres e fotos, ambos no Supabase, publicação na Vercel.
+
 ## Antes de publicar
 
 Copie `.env.example` para `.env` e preencha as credenciais do TiDB Cloud/MySQL e Cloudinary. Nunca envie `.env` ou chaves ao GitHub. Rode `pnpm check`, `pnpm test` e `pnpm build` localmente.

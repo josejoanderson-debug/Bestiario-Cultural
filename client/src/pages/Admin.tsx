@@ -7,7 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
-import { uploadImageToCloudinary } from "@/lib/cloudinaryUpload";
+import { uploadImageToSupabase } from "@/lib/supabaseUpload";
 
 type CultureDraft = {
   slug: string;
@@ -173,8 +173,9 @@ function AdminContent() {
     } : page));
   };
 
-  // O envio vai direto do navegador para o Cloudinary (upload não assinado),
-  // sem passar pela função serverless da Vercel — ver client/src/lib/cloudinaryUpload.ts.
+  // O envio vai direto do navegador para o Supabase Storage (bucket público
+  // "cultural-photos"), sem passar pela função serverless da Vercel — ver
+  // client/src/lib/supabaseUpload.ts.
   const handlePhotoFile = async (file: File | undefined) => {
     if (!file) return;
     if (!/^image\/(jpeg|png|webp|gif)$/.test(file.type)) {
@@ -187,7 +188,7 @@ function AdminContent() {
     }
     setIsUploadingPhoto(true);
     try {
-      const uploaded = await uploadImageToCloudinary(file);
+      const uploaded = await uploadImageToSupabase(file);
       patchDraft("photoUrl", uploaded.url);
       toast.success("Imagem enviada. Complete o crédito e a licença antes de salvar.");
     } catch (error) {
@@ -206,7 +207,7 @@ function AdminContent() {
     const key = `${pageIndex}-${imageIndex}`;
     setUploadingExtraImageKey(key);
     try {
-      const result = await uploadImageToCloudinary(file);
+      const result = await uploadImageToSupabase(file);
       updateExtraImage(pageIndex, imageIndex, "imageUrl", result.url);
       toast.success("Imagem de aprofundamento enviada. Informe crédito, fonte e licença.");
     } catch (error) {

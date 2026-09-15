@@ -1,5 +1,7 @@
 # Guia de hospedagem independente do Bestiário Cultural
 
+> **Nota (atualizado):** este documento é de uma fase anterior do projeto e menciona TiDB/MySQL e Cloudinary. O banco de dados atual é **Postgres** (Supabase) e as imagens ficam no **Supabase Storage**. Para o caminho principal e testado de publicação, siga [`docs/DEPLOY_VERCEL_SUPABASE.md`](DEPLOY_VERCEL_SUPABASE.md). O restante deste guia (arquitetura geral, backups, plano de migração) continua válido como referência.
+
 ## Objetivo e resposta direta
 
 É possível deixar o Bestiário Cultural fora da hospedagem do Manus e manter **site, área administrativa, banco de dados, fotos e aplicativo Android** funcionando com serviços externos. No entanto, nenhum serviço gratuito de terceiros pode ser prometido como gratuito ou disponível “para sempre”: planos e limites podem mudar, e uma conta pode ser suspensa se ultrapassar a franquia. A estratégia realmente duradoura é manter o **código em um repositório GitHub**, o **banco exportável**, as **imagens em armazenamento externo** e backups periódicos. Assim, trocar de provedor passa a ser uma migração, e não uma reconstrução da obra.

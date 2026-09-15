@@ -1,5 +1,7 @@
 # Variáveis de ambiente para hospedagem externa
 
+> **Nota (atualizado):** a lista atual e completa de variáveis está em [`docs/DEPLOY_VERCEL_SUPABASE.md`](DEPLOY_VERCEL_SUPABASE.md) (seção 3) e em `.env.example`, na raiz do projeto.
+
 Cadastre estas variáveis no provedor de hospedagem. Os valores nunca devem entrar no GitHub.
 
 | Variável | Obrigatória | Finalidade |

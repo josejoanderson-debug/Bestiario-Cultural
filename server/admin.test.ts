@@ -8,14 +8,10 @@ const dbMocks = vi.hoisted(() => ({
   getCulturalEntryBySlug: vi.fn(),
 }));
 
-const storageMocks = vi.hoisted(() => ({ storagePut: vi.fn() }));
-
 vi.mock("./db", async (importOriginal) => ({
   ...(await importOriginal<typeof import("./db")>()),
   ...dbMocks,
 }));
-
-vi.mock("./storage", () => ({ storagePut: storageMocks.storagePut }));
 
 import { publicCulturalEntries } from "./db";
 import { appRouter } from "./routers";
@@ -69,15 +65,6 @@ describe("administração do acervo cultural", () => {
 
     await expect(adminCaller().admin.listCultures()).resolves.toEqual([{ slug: "rascunho", isPublished: false }]);
     expect(dbMocks.listCulturalEntries).toHaveBeenCalledWith({ includeUnpublished: true });
-  });
-
-  it("recebe imagem pelo painel e encaminha os bytes ao armazenamento protegido", async () => {
-    storageMocks.storagePut.mockResolvedValue({ key: "cultural-photos/foto.jpg", url: "/manus-storage/foto.jpg" });
-    const payload = { fileName: "foto.jpg", mimeType: "image/jpeg" as const, base64: Buffer.from("imagem de teste para envio").toString("base64") };
-
-    await expect(userCaller().admin.uploadPhoto(payload)).rejects.toMatchObject({ code: "FORBIDDEN" });
-    await expect(adminCaller().admin.uploadPhoto(payload)).resolves.toEqual({ key: "cultural-photos/foto.jpg", url: "/manus-storage/foto.jpg" });
-    expect(storageMocks.storagePut).toHaveBeenCalledWith(expect.stringMatching(/^cultural-photos\//), expect.any(Buffer), "image/jpeg");
   });
 
   it("encaminha criação, edição e mudança de publicação ao armazenamento persistente", async () => {
